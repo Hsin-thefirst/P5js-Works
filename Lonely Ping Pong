@@ -1,0 +1,80 @@
+let locX, locY, speedX, speedY, diam;
+let rectX, rectY, rectW, rectH;
+let score = 0;
+let chance = 3;
+function setup() {
+  createCanvas(400, 400);
+
+  //initialise ball variables
+  locX = random(width/4);
+  locY = random(height);
+  speedX = random(2,3);
+  speedY = speedX;
+  diam = 20;
+  
+  rectX = 388;
+  rectW = 10;
+  rectH = 60;
+  
+}
+
+function draw() {
+  background(220);
+  
+  text("SCORES:", 10, 20)
+  text(score, 60, 20)
+
+  circle(locX, locY, diam);
+
+  locX = locX + speedX;
+  locY = locY + speedY;
+
+  //if the ball bounces on the left or right side, switch direction
+  if (locX <= 0+diam/2) {
+    speedX = speedX * -1;
+  }
+  //if the ball bounces on the top or bottom side, switch direction
+  if (locY >= height-diam/2 || locY <= 0+diam/2) {
+    speedY = speedY * -1;
+  }
+  
+  rectY = mouseY - rectH/2;
+  rect(rectX, rectY, rectW, rectH);
+  
+  if (locX + diam/2 >= rectX && locY >= rectY && locY <= rectY + rectH && locX + diam/2 < rectX+speedX) {
+    speedX = -speedX;
+    score++;
+  }
+  
+  if (locX >= width + diam) {
+    chance--;
+    locX = random(width/4);
+    locY = random(height);
+    speedX = random(2,3);
+    speedY = speedX;
+  }
+  
+  text("HP:", 10, height-10)
+  text(chance, 30, height-10)
+  
+  if (speedX >= 0) {
+    speedX += 0.01;
+  }
+  
+  if (speedY >= 0) {
+    speedX += 0.01;
+  }
+  
+  if (speedX <= 0) {
+    speedX -= 0.01;
+  }
+  
+  if (speedY <= 0) {
+    speedX -= 0.01;
+  }
+  
+  if (chance <= 0) {
+    noLoop();
+    text("GAME OVER", 170, 200)
+  }
+}
