@@ -1,0 +1,218 @@
+//Put self to nature: record time according to nature phenomena
+//minute : the number of snowflakes
+//hour : the color will change with hour and i also partition out 4 wide time zone
+//second : errr i dont know
+//at first i wish i could make some bubbles insted of snow(but it turned out that is too difficult to make it)
+
+let snows = [];
+let clouds = [];
+let s, h, m;
+function setup() {
+  createCanvas(800, 600);
+  s = second();
+  h = hour();
+  m = minute();
+  for (let i = 0; i < 2; i++) {
+    snows[i] = new Snow(
+      random(10,15),
+      random(width),
+      random(height),
+      random(2, 7),
+    );
+  }
+  noStroke();
+  fill(255, 204);
+  
+  for (let i = 0; i < 2; i++) {
+    clouds[i] = new Cloud(
+      random(-2,2),
+      0,
+      random(300,height),
+      random(0.2,1),
+    );
+  }
+}
+
+function draw() {
+  //background(0);
+
+
+  
+  if (snows.length < m) {
+    for (let i = 0; i < m - snows.length; i++) {
+        snows[snows.length+i] = new Snow(
+        random(10,15),
+        random(width),
+        random(height),
+        random(3, 7),
+        );
+    }
+  } else if (snows.length > m) {
+    snows = [];
+      for (let i = 0; i <snows.length; i++) {
+        snows[snows.length+i] = new Snow(
+        random(10,15),
+        random(width),
+        random(height),
+        random(3, 7),
+        );
+      }
+  }
+   
+  //show daytime
+  if (h > 21&& h<= 4) {
+    let d = abs(h-12.5);
+    map(d,0, 8.5, 0, (83+134+197-29-43)/3);
+    push();
+      noStroke();
+    //night
+      let initN = color(0+d,29+d,43+d);
+      let endN = color(83+d,134+d,197+d);
+
+      for (let i = 0; i < 40; i++) {
+        let amt = i/(40);
+        let c = lerpColor(initN, endN, amt);
+        fill(c);
+        rect(0, i * (15), width, 15);
+      }
+    pop();
+  } else if (h > 4&& h<= 9) {
+    let d = h-4;
+    map(d,0, 5, 0, (251+210+106-144-33)/3);
+    push();
+      noStroke();
+    //morning
+      let initM = color(144+d, 0+d, 33+d);
+      let endM = color(251+d, 210+d, 106+d);
+
+      for (let i = 0; i < 40; i++) {
+        let amt = i/(40);
+        let c = lerpColor(initM, endM, amt);
+        fill(c);
+        rect(0, i * (15), width, 15);
+      }
+    pop();
+  } else if ( h > 9 && h <= 17) {
+    let d = h - 9;
+    map(d,0, 8, 0, (129+216+207-1-132-127)/3);
+    push();
+      noStroke();
+    //Daytime
+      let initD = color(153+d, 132+d, 127+d);
+      let endD = color(0+d, 49+d, 82+d);
+
+      for (let i = 0; i < 40; i++) {
+        let amt = i/(40);
+        let c = lerpColor(initD, endD, amt);
+        fill(c);
+        rect(0, i * (15), width, 15);
+      }
+    pop();
+  } else if ( h > 17 && h <= 21) {
+    let d = h-17;
+    map(d,0, 4, 0, (47+167-1-132-127)/3);
+    push();
+      noStroke();
+    //Dusk
+      let initD = color(1+d, 132+d, 127+d);
+      let endD = color(0+d, 47+d, 167+d);
+
+      for (let i = 0; i < 40; i++) {
+        let amt = i/(40);
+        let c = lerpColor(initD, endD, amt);
+        fill(c);
+        rect(0, i * (15), width, 15);
+      }
+    pop();
+  }
+  
+  snows.forEach(snow => {
+    snow.move();
+    snow.display();
+  });
+  
+  
+  
+  clouds.forEach(cloud => {
+    cloud.move();
+    cloud.display();
+  });
+  
+  push();
+    fill(200-h);
+    triangle(100,600,500,600,300,300);
+    fill(250-h);
+    triangle(245,380,300,300,288,406);
+    triangle(312,371,300,300,288,406);
+    triangle(330,377,300,300,288,406);
+    triangle(330,377,300,300,357,385);
+  pop();
+  
+  push();
+    fill(190-h);
+    triangle(300,600,500,600,400,400);
+  pop();
+  
+  
+  text(mouseX, 20,20)
+  text(mouseY, 50,20)
+}
+
+class Snow {
+  constructor(rr, rx, ry, yrSpeed){
+    this.x = rx;
+    this.y = ry;
+    this.r = rr;
+    this.xSpeed = 0;
+    this.ySpeed = yrSpeed;
+  }
+  
+  move() {
+    this.x += this.xSpeed;
+    this.y += this.ySpeed;
+    
+    if (this.x - this.r > width) {
+      this.x = -this.r;
+    }
+    if (this.y - this.r > height) {
+      this.y = -this.r
+    }
+  }
+  
+  display() {
+    ellipse(this.x, this.y, this.r, this.r);
+  }
+  
+}
+
+class Cloud {
+    constructor(rr, rx, ry, xrSpeed){
+    this.x = rx;
+    this.y = ry;
+    this.r = rr;
+    this.xSpeed = xrSpeed;
+    this.ySpeed = 0;
+  }
+  
+  move() {
+    this.x += this.xSpeed;
+    this.y += this.ySpeed;
+    
+    if (this.x - 30 - 3*this.r > width) {
+      this.x = -this.r;
+    }
+    if (this.y - this.r > height) {
+      this.y = -this.r
+    }
+  }
+  
+  display() {
+    fill(235-h);
+    ellipse(this.x, this.y, 70+this.r, 50+this.r);
+    fill(235-h-2);
+    ellipse(this.x +10, this.y +10, 70+this.r, 50+this.r);
+    fill(235-h-6);
+    ellipse(this.x -20, this.y + 10, 70+this.r, 50+this.r);
+  }
+  
+}
